@@ -87,7 +87,7 @@ static void cleanup(LV2_Handle instance) {
 }
 
 static const LV2_Descriptor descriptor = {
-    "https://example.org/SubOctaveForBass",
+    "https://github.com/YimRakHee/SubOctaveForBass",
     instantiate,
     connect_port,
     nullptr,
