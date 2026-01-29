@@ -1,6 +1,9 @@
 # SubOctaveForBass
 Simple but effective Analog-style Sub-Octave LV2 Plugin for Bass Guitar.
+No GUI.
 Tested Environment: Arch Linux / Ardour.
+
+![SubOctaveForBass Screenshot](./images/suboctave.png)
 
 ## Features
 - Zero-crossing Flip-Flop logic for stable tracking.
