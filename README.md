@@ -15,7 +15,7 @@ Tested Environment: Arch Linux / Ardour.<br>
 - C++20 compatible compiler (GCC/Clang)
 - CMake
 
-## Build & Install
+## Build & Install (LINUX)
 1. `mkdir build && cd build`
 2. `cmake ..`
 3. `make`
