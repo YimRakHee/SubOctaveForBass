@@ -24,13 +24,16 @@ public:
     float sample_rate;
 
     float last_sample;
+    float last_tone;
+    float out_alpha;
+
     int state;
     int flip_flop;
 
     MyOctavePedal(double rate) :
     in_lpf_state(0.0f), out_lpf_state(0.0f),
-    sample_rate((float)rate), last_sample(0.0f),
-    state(1), flip_flop(0) {}
+    sample_rate((float)rate), last_sample(0.0f), last_tone(-1.0f),
+    out_alpha(0.0f), state(1), flip_flop(0) {}
 };
 
 static LV2_Handle instantiate(const LV2_Descriptor* descriptor, double rate, const char* bundle_path, const LV2_Feature* const* features) {
@@ -55,8 +58,15 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
     float wet_vol = *self->wet_lev;
     float tone_freq = *self->tone_val;
 
-    float in_alpha = (2.0f * 3.14159265f * 150.0f) / self->sample_rate;
-    float out_alpha = (2.0f * 3.14159265f * tone_freq) / self->sample_rate;
+    const float in_alpha = (2.0f * 3.14159265f * 150.0f) / self->sample_rate;
+
+        if (tone_freq != self->last_tone) {
+        self->out_alpha = (2.0f * 3.14159265f * tone_freq) / self->sample_rate;
+        self->last_tone = tone_freq;
+    }
+
+    float out_a = self->out_alpha;
+    const float threshold = 0.001f;
 
     for (uint32_t i = 0; i < n_samples; ++i) {
         float in = self->input[i];
@@ -64,7 +74,7 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
         self->in_lpf_state += in_alpha * (in - self->in_lpf_state);
         float analysis_sig = self->in_lpf_state;
 
-        if (self->last_sample <= 0.0f && analysis_sig > 0.0f) {
+        if (self->last_sample <= threshold && analysis_sig > threshold) {
             self->flip_flop++;
             if (self->flip_flop >= 2) {
                 self->state *= -1;
@@ -73,12 +83,14 @@ static void run(LV2_Handle instance, uint32_t n_samples) {
         }
         self->last_sample = analysis_sig;
 
-        float oct_raw = (float)self->state * std::abs(in);
+       float oct_raw = (float)self->state * std::abs(in);
 
-        self->out_lpf_state += out_alpha * (oct_raw - self->out_lpf_state);
-        float oct_smooth = self->out_lpf_state;
+       self->out_lpf_state += out_a * (oct_raw - self->out_lpf_state);
 
-        self->output[i] = (in * dry_vol) + (oct_smooth * wet_vol);
+
+        if (std::abs(self->out_lpf_state) < 1e-15f) self->out_lpf_state = 0.0f;
+
+        self->output[i] = (in * dry_vol) + (self->out_lpf_state * wet_vol);
     }
 }
 
