@@ -1,5 +1,5 @@
 /*
- * SplitDistForBass
+ * SubOctaveForBass
  * Copyright (C) 2026 YimRakHee <https://github.com/YimRakHee>
  *
  * This program is free software: you can redistribute it and/or modify

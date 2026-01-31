@@ -17,18 +17,18 @@ Tested Environment: Arch Linux / Ardour.<br>
 
 ### Build & Install (LINUX)
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/YimRakHee/SubOctaveForBass.git
 cd SubOctaveForBass
 
-# 2. Create a build directory
+# Create a build directory
 mkdir build && cd build
 
-# 3. Configure CMake and compile
+# Configure CMake and compile
 cmake ..
 make
 
-# 4. Install the plugin (installs to ~/.lv2/ by default)
+# Install the plugin (installs to ~/.lv2/ by default)
 make install
 ```
 
